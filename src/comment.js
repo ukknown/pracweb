@@ -1,5 +1,6 @@
 import React from "react";
 import { Comment, Form, Button, Header, Icon } from "semantic-ui-react";
+import moment from "moment";
 
 import hm from "./human.jpg";
 
@@ -8,11 +9,11 @@ function SingleComment(detail) {
     <Comment>
       <Comment.Content>
         <Comment.Avatar src={hm} />
-        <Comment.Author as="a">Matt</Comment.Author>
+        <Comment.Author as="a">방문자</Comment.Author>
         <Comment.Metadata>
-          <div>Today at 5:42PM</div>
+          <div>{detail.info.time}</div>
         </Comment.Metadata>
-        <Comment.Text>{detail.content}</Comment.Text>
+        <Comment.Text>{detail.info.content}</Comment.Text>
       </Comment.Content>
     </Comment>
   );
@@ -23,6 +24,7 @@ class Comments extends React.Component {
     super();
     this.state = {
       inputContent: "",
+      inputTime : "",
       commentsList: [],
     };
   }
@@ -35,13 +37,13 @@ class Comments extends React.Component {
         </Header>
 
         {this.state.commentsList.map((comments) => (
-          <SingleComment content={comments} />
+          <SingleComment info={comments} />
         ))}
 
         <Form reply>
           <Form.TextArea
             value={this.state.inputContent}
-            placeholder="댓글을 입력해주세요"
+            placeholder= "댓글을 입력해주세요."
             onChange = {(e) => this.setState({ inputContent: e.target.value })}
           />
           <Button
@@ -49,13 +51,18 @@ class Comments extends React.Component {
             labelPosition="left"
             icon="edit"
             primary
-            onClick={() =>
+            onClick={() => {if (this.state.inputContent != ""){
               this.setState( (prevState) => {
                 return {
-                  commentsList: [...prevState.commentsList, this.state.inputContent],
+                  commentsList: [...prevState.commentsList, {content: this.state.inputContent, time : moment().format("YYYY년 MM월 DD일 HH시 mm분 ss초"),},],
+                  inputContent: ""
                 };
               })
             }
+            else {
+              alert("내용을 입력해주세요.");
+            }
+          }}
           />
         </Form>
         <br />
